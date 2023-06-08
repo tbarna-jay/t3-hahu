@@ -20,5 +20,11 @@
   "eslint.packageManager": "yarn",
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
+  },
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "editor.quickSuggestions": {
+    "strings": true
   }
 }
