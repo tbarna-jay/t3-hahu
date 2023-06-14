@@ -5,8 +5,9 @@ import Image from 'next/image';
 import { type RouterOutputs, api } from '~/utils/api';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { LoadingPage } from '~/components/Loading';
+import { LoadingPage, LoadingSpinner } from '~/components/Loading';
 import React from 'react';
+import { toast } from 'react-hot-toast';
 
 dayjs.extend(relativeTime);
 
@@ -21,11 +22,19 @@ const CreatPostWizard = () => {
       setInput('');
       void ctx.posts.getAll.invalidate();
     },
+    onError: (e) => {
+      const errorMessage = e.data?.zodError?.fieldErrors.content;
+      console.log(errorMessage, e.data);
+      if (errorMessage) {
+        return toast.error(errorMessage.join(', '));
+      }
+      toast.error('Failed to post. Please try again later!');
+    },
   });
 
-  if (!user) return null;
+  const send = () => mutate({ content: input });
 
-  if (isLoading) return <div>Posting...</div>;
+  if (!user) return null;
 
   return (
     <div className="flex w-full gap-2">
@@ -34,11 +43,20 @@ const CreatPostWizard = () => {
         className="flex grow bg-transparent outline-none"
         placeholder="Irj vmit!"
         value={input}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            send();
+          }
+        }}
         onChange={(e) => setInput(e.target.value)}
       />
-      <button disabled={isLoading} onClick={() => mutate({ content: input })}>
-        Post!
-      </button>
+      {input !== '' && !isLoading && (
+        <button disabled={isLoading} onClick={send}>
+          Post!
+        </button>
+      )}
+      {!!isLoading && <LoadingSpinner />}
     </div>
   );
 };
