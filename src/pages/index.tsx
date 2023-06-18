@@ -1,6 +1,5 @@
 import { SignInButton, useUser } from '@clerk/nextjs';
 import { type NextPage } from 'next';
-import Head from 'next/head';
 import Image from 'next/image';
 import { type RouterOutputs, api } from '~/utils/api';
 import dayjs from 'dayjs';
@@ -9,6 +8,7 @@ import { LoadingPage, LoadingSpinner } from '~/components/Loading';
 import React from 'react';
 import { toast } from 'react-hot-toast';
 import Link from 'next/link';
+import DefaultLayout from '~/layout/DefaultLayout';
 
 dayjs.extend(relativeTime);
 
@@ -67,7 +67,7 @@ type PostWithUser = RouterOutputs['posts']['getAll'][number];
 const PostView = (props: PostWithUser) => {
   const { post, author } = props;
   return (
-    <div className="flex w-full gap-2 border-b border-gray-100 p-8">
+    <div className="border-gray-100 flex w-full gap-2 border-b p-8">
       <Image
         width={30}
         height={30}
@@ -111,12 +111,10 @@ const Home: NextPage = () => {
   if (!isUserLoaded) return <LoadingPage />;
 
   return (
-    <main className="flex h-screen justify-center ">
-      <div className="h-full w-full overflow-y-scroll border-x md:max-w-2xl">
-        <div className="flex border-b border-gray-100 p-4">{isSignedIn ? <CreatPostWizard /> : <SignInButton />}</div>
-        <Feed />
-      </div>
-    </main>
+    <DefaultLayout>
+      <div className="border-gray-100 flex border-b p-4">{isSignedIn ? <CreatPostWizard /> : <SignInButton />}</div>
+      <Feed />
+    </DefaultLayout>
   );
 };
 
